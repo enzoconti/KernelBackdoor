@@ -1,4 +1,4 @@
-obj-m += kernelmodule.o
+obj-m += keyboardmodule.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
