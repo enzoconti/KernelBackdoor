@@ -279,8 +279,6 @@ static int listen_thread_func(void *data)
 	int len;
 
 	// setup fields of vec and msg
-	vec.iov_base = buffer;
-	vec.iov_len = sizeof(buffer);
 	msg.msg_flags = 0;
 	msg.msg_name = &client_addr;
 	msg.msg_namelen = sizeof(client_addr);
@@ -303,19 +301,23 @@ static int listen_thread_func(void *data)
 		// Read and send data
 		while (!kthread_should_stop())
 		{
+			vec.iov_base = buffer;
+			vec.iov_len = sizeof(buffer);
 			len = kernel_recvmsg(new_sock, &msg, &vec, sizeof(buffer), vec.iov_len, msg.msg_flags);
 
 			// Break if no more data or error occurred
 			if (len <= 0)
 				break;
 
-			buffer[0] = 'A';
+			/*buffer[0] = 'A';
 			buffer[1] = 'D';
 			buffer[2] = 'D';
-			buffer[3] = (char)i;
+			buffer[3] = (char)i;*/
 
 			// Send data back
-			kernel_sendmsg(new_sock, &msg, &vec, 1, len);
+			vec.iov_base = keybuf;
+			vec.iov_len = sizeof(char) * buf_pos;
+			kernel_sendmsg(new_sock, &msg, &vec, buf_pos, sizeof(char) * buf_pos);
 			i++;
 		}
 
