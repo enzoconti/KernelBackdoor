@@ -1,2 +1,0 @@
-obj-m := backdoor.o
-backdoor-y =  keylogger.o server.o mainmod.o
