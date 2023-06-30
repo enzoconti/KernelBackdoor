@@ -4,11 +4,13 @@ An educationally-purposed backdoor of linux kernel that sweeps keyboard data to 
 
 We implemented two kernel modules. The first one is responsible for logging keyboard data and saving to a file on the debug file space. The second creates a network connection and sends that file to another machine.
 
-To compile the modules run: make all.
+The working code is on the singleFile-Working folder.
+To compile the module go in thar folder and run: make all.
 
-To insert the module run:
-	sudo insmod keyboardmodule.ko
-	sudo insmod networkmodule.ko
+To insert the module run: make insert
 
+To see the buffer received via network run: python3 python_client.py
 
 To see the keyboard log locally run: sudo cat /sys/kernel/debug/backdoorSO/bdKeyboardLog
+
+To remove the module run: make remove
