@@ -5,7 +5,7 @@ An educationally-purposed backdoor of linux kernel that sweeps keyboard data to 
 We implemented two kernel modules. The first one is responsible for logging keyboard data and saving to a file on the debug file space. The second creates a network connection and sends that file to another machine.
 
 The working code is on the singleFile-Working folder.
-To compile the module go in thar folder and run: make all.
+To compile the module go in that folder and run: make all.
 
 To insert the module run: make insert
 
