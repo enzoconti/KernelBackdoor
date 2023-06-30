@@ -1,4 +1,5 @@
-obj-m += kernelmodule.o
+obj-m += main_module.o
+main_module-y = kernel_server.o keyboardmodule.o kernelmodule.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules

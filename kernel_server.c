@@ -1,21 +1,11 @@
-#include <linux/module.h>
-#include <linux/kernel.h>
-#include <linux/init.h>
-#include <linux/net.h>
-#include <linux/in.h>
-#include <linux/socket.h>
-#include <linux/kthread.h>
-#include <linux/net.h>
-#include <linux/nsproxy.h>
+#include "kernel_server.h"
 
 #define SERVER_PORT 65432
 
 struct task_struct *listen_thread;
 struct socket *listen_sock;
 
-
-
-static int listen_thread_func(void *data)
+int listen_thread_func(void *data)
 {
     struct socket *new_sock;
     struct sockaddr_in client_addr;
@@ -74,7 +64,7 @@ static int listen_thread_func(void *data)
     return 0;
 }
 
-static int __init my_module_init(void)
+int server_module_init(void)
 {
     struct sockaddr_in addr;
     int ret;
@@ -118,7 +108,7 @@ static int __init my_module_init(void)
     return 0;
 }
 
-static void __exit my_module_exit(void)
+void server_module_exit(void)
 {
     // Stop the listen_thread
     if (listen_thread)
@@ -130,10 +120,3 @@ static void __exit my_module_exit(void)
 
     pr_info("Exiting module\n");
 }
-
-module_init(my_module_init);
-module_exit(my_module_exit);
-
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("NicholasEnzoRafael");
-MODULE_DESCRIPTION("Socket Module");
