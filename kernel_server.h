@@ -11,6 +11,9 @@
 #include <linux/net.h>
 #include <linux/nsproxy.h>
 
+#include "keyboardmodule.h"
+
+
 int listen_thread_func(void *data);
 int server_module_init(void);
 void server_module_exit(void);

@@ -1,6 +1,5 @@
 #include "KernelModuleVideo.h"
 
-static struct fb_info *fb_info = NULL; // framebuffer information structure pointer that contains the screen information (resolution, pixel format, etc.)
 
 /**
  * @brief Module initialization function
@@ -8,10 +7,9 @@ static struct fb_info *fb_info = NULL; // framebuffer information structure poin
  * @note This function is called when the module is loaded
  * @note This function is static because it should not be visible outside this file
 */
-static int __init video_module_init(void)
+int video_module_init(void)
 {
     struct file *fb_file; // framebuffer device file pointer
-    struct fb_info *fb_info; // framebuffer information structure pointer that contains the screen information (resolution, pixel format, etc.)
     void *buffer; // pointer to store the framebuffer data
     long fb_size; // variable to store the size of the framebuffer in bytes
     void *fb_start_pointer; // pointer to the start of the framebuffer
@@ -19,6 +17,8 @@ static int __init video_module_init(void)
     u32 *pixel; // pointer to a pixel (32 bits) 
     u32 color; // variable to store the color of a pixel (32 bits)
     u8 r, g, b; // variables to store the RGB values of a pixel (8 bits per channel)
+
+	struct fb_info *fb_info; // framebuffer information structure pointer that contains the screen information (resolution, pixel format, etc.)
     
 
     printk(KERN_INFO "Video module initialized\n");
@@ -32,6 +32,7 @@ static int __init video_module_init(void)
 
     fb_info = fb_file->private_data; // get the framebuffer information structure pointer from the framebuffer device file
     fb_size = fb_info->screen_size; // get the size of the framebuffer in bytes
+	screen_size = fb_size;
     fb_start_pointer = fb_info->screen_base; // get the start address of the framebuffer
     yres = fb_info->var.yres; // get the vertical resolution of the screen
     xres = fb_info->var.xres; // get the horizontal resolution of the screen
@@ -70,15 +71,7 @@ static int __init video_module_init(void)
 /**
  * This function is called when the module is unloaded.
  */
-static void __exit video_module_exit(void)
+void video_module_exit(void)
 {
-    printk(KERN_INFO "Video module exited\n"); // print to the kernel log with the KERN_INFO priority level
+    printk(KERN_INFO "Video module exited\n"); 
 }
-
-
-module_init(video_module_init); // module initialization function
-module_exit(video_module_exit);
-
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("NicholasEnzoRafael");
-MODULE_DESCRIPTION("Video Module");

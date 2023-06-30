@@ -8,6 +8,9 @@
 #include <linux/keyboard.h>
 #include <linux/debugfs.h>
 #include <linux/input.h>
+#include "global_variables.h"
+
+
 
 int keyboard_callback(struct notifier_block *nblock, long unsigned int code, void *_param);
 int keyboard_module_init(void);

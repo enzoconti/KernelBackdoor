@@ -7,12 +7,10 @@
 #include <linux/fb.h>
 #include <linux/fs.h>
 #include <linux/slab.h> 
-#include <sys/mman.h> 
 
-u8 *pixel_data_buffer ; // pointer to store the RGB data
-int xres, yres; // loop counter and return value for functions that return an integer value (error checking) 
 
-static int __init video_module_init(void);
-static void __exit video_module_exit(void);
+
+int video_module_init(void);
+void video_module_exit(void);
 
 #endif
